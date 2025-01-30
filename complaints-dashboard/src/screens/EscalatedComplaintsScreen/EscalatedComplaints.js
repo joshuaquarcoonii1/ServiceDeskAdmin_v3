@@ -13,7 +13,7 @@ const EscalatedComplaintsScreen = () => {
   useEffect(() => {
     const fetchEscalatedComplaints = async () => {
       try {
-        const response = await axios.get('https://servicedeskadmin-v3.onrender.com:5000/ServiceAdminEscalate/escalated');
+        const response = await axios.get('https://servicedeskadmin-v3.onrender.com/ServiceAdminEscalate/escalated');
         setComplaints(response.data);
          setFilteredComplaints(response.data);// Initialize with all complaints
         setLoading(false);
