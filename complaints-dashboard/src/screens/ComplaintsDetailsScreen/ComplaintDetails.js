@@ -17,7 +17,7 @@ const ComplaintDetailsScreen = () => {
   useEffect(() => {
     const fetchComplaintDetails = async () => {
       try {
-        const response = await axios.get(`http://172.26.4.64:3000/ServiceAdminEscalate/escalated/${id}`);
+        const response = await axios.get(`https://servicedeskadmin-v3.onrender.com:5000/ServiceAdminEscalate/escalated/${id}`);
         setComplaint(response.data);
         setRemarks(response.data.remarks || ''); // Initialize remarks with existing data if available
         setLoading(false);
@@ -35,7 +35,7 @@ const ComplaintDetailsScreen = () => {
 
   const handleComplete = async (id, newStatus) => {
     try {
-      await axios.put(`http://172.26.4.64:3000/Greports/update-status/${id}`, {
+      await axios.put(`https://servicedeskadmin-v3.onrender.com:5000/Greports/update-status/${id}`, {
         status: newStatus,
       });
       alert(`Status updated to ${newStatus}`);
