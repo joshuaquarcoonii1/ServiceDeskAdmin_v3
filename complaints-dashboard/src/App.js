@@ -53,7 +53,7 @@ function App() {
   const fetchComplaints = async (page = 1, status = 'All') => {
     setLoading(true);
     try {
-      const response = await axios.get('https://servicedeskadmin-v3.onrender.com:5000/Greports_2', {
+      const response = await axios.get('https://servicedeskadmin-v3.onrender.com/Greports_2', {
         params: {
           page,
           limit: itemsPerPage,
@@ -75,7 +75,7 @@ function App() {
 
   const updateComplaintStatus = async (id, newStatus) => {
     try {
-      await axios.put(`https://servicedeskadmin-v3.onrender.com:5000/Greports/update-status/${id}`, {
+      await axios.put(`https://servicedeskadmin-v3.onrender.com/Greports/update-status/${id}`, {
         status: newStatus,
       });
       alert(`Status updated to ${newStatus}`);
@@ -87,7 +87,7 @@ function App() {
 
   const verifyReport = async (id) => {
     try {
-      const response = await axios.put(`https://servicedeskadmin-v3.onrender.com:5000/reports/verify/${id}`);
+      const response = await axios.put(`https://servicedeskadmin-v3.onrender.com/reports/verify/${id}`);
       alert(response.data.message);
       await updateComplaintStatus(id, 'completed');
     } catch (error) {
