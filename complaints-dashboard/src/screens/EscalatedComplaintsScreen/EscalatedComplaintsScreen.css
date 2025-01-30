@@ -1,0 +1,85 @@
+/* Global container for the entire complaints screen */
+.complaints-container {
+    margin: 0 auto;
+    padding: 20px;
+    max-width: 1000px;
+  }
+  
+  h1 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  /* Loading and error states */
+  .loading, .error {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-top: 50px;
+    color: #FF6347; /* Red color for errors */
+  }
+  
+  .complaints-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .complaint-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #ddd;
+  }
+  
+  .complaint-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    background-color: #ddd; 
+  }
+  
+  .complaint-card h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .complaint-card p {
+    font-size: 1rem;
+    color: #666;
+  }
+  
+  .complaint-card p strong {
+    color: #333;
+  }
+
+  .filter-container {
+    margin: 20px 0;
+    text-align: center;
+  }
+  
+  .filter-container label {
+    font-size: 1rem;
+    margin-right: 10px;
+    color: #333;
+  }
+  
+  .filter-container select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  .redo-label {
+    display: inline-block;
+    background-color: orange;
+    color: white;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    text-align: center;
+  }
+  
