@@ -73,6 +73,14 @@ function App() {
     fetchComplaints(currentPage, filterStatus);
   }, [currentPage, filterStatus]);
 
+    useEffect(() => {
+    const interval = setInterval(() => {
+      fetchComplaints(currentPage, filterStatus);
+    }, 60000); // Refresh every 60 seconds
+
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, [currentPage, filterStatus]);
+
   const updateComplaintStatus = async (id, newStatus) => {
     try {
       await axios.put(`https://servicedeskadmin-v3.onrender.com/Greports/update-status/${id}`, {
@@ -285,20 +293,20 @@ function App() {
               <td>{complaint.location.toUpperCase()}</td>
               <td>{complaint.username}</td>
               <td>{complaint.contact}</td>
-              {<td>{new Date(complaint.createdAt).toLocaleString()}</td>}
+              {<td>{new Date(complaint.createdAt).toLocaleString('en-US', { day: 'numeric', month: 'short', hour: 'numeric', minute: 'numeric', hour12: true })}</td>}
              
                
               {filterStatus !== 'New' && filterStatus !== 'Escalated'&&filterStatus !== 'Completed'&&filterStatus !== 'Resolved'&&
               <td>
                 {
-                new Date(complaint.EscalatedAt).toLocaleString()
+                new Date(complaint.EscalatedAt).toLocaleString('en-US', { day: 'numeric', month: 'short', hour: 'numeric', minute: 'numeric', hour12: true })
                  }
               </td>
             }
               {filterStatus !== 'New' &&filterStatus !== 'Escalated'&& 
               <td>
                 {
-                new Date(complaint.resolvedAt).toLocaleString()}
+                new Date(complaint.resolvedAt).toLocaleString('en-US', { day: 'numeric', month: 'short', hour: 'numeric', minute: 'numeric', hour12: true })}
                 
               </td>
               }
