@@ -267,7 +267,8 @@ function App() {
               <th>User</th>
               <th>Contact</th>
               {<th>Submitted</th>}
-              
+              {filterStatus !== 'New' && filterStatus !== 'Completed'&&filterStatus !== 'Resolved'&&filterStatus !== 'All'&&<th>Escalated For</th>}
+
               {filterStatus !== 'New' &&filterStatus !== 'Escalated'&& filterStatus !== 'Completed'&&filterStatus !== 'Resolved'&& <th>Escalated</th>} 
               {filterStatus !== 'New' &&filterStatus !== 'Escalated'&&<th>Resolved At</th>}
               {filterStatus !== 'Escalated'&&filterStatus !== 'Completed'&&<th>Actions</th>}
@@ -295,7 +296,9 @@ function App() {
               <td>{complaint.contact}</td>
               {<td>{new Date(complaint.createdAt).toLocaleString('en-US', { day: 'numeric', month: 'short', hour: 'numeric', minute: 'numeric', hour12: true })}</td>}
              
-               
+                 {filterStatus === 'Escalated' && (
+                <td>{calculateEscalatedHours(complaint.EscalatedAt)} hours</td>
+              )}
               {filterStatus !== 'New' && filterStatus !== 'Escalated'&&filterStatus !== 'Completed'&&filterStatus !== 'Resolved'&&
               <td>
                 {
