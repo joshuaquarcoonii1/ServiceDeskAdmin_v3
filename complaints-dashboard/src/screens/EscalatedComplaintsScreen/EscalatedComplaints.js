@@ -66,7 +66,7 @@ const EscalatedComplaintsScreen = () => {
 
   return (
     <div className="complaints-container">
-      <h1> Client Services</h1>
+      <h1> Escalated Complaints</h1>
 
       {/* Filter Dropdown */}
       <div className="filter-container">
@@ -90,7 +90,14 @@ const EscalatedComplaintsScreen = () => {
         <p>No escalated complaints found for {selectedLocation}.</p>
       ) : (
         <div className="complaints-cards">
-          {filteredComplaints.map((complaint) => (
+          {filteredComplaints.map((complaint) => {
+             {
+            const timeDifference = calculateTimeDifference(complaint.createdAt);
+            const timeLimit = getTimeLimit(complaint.assignedUnit);
+            const isOverdue = timeDifference > timeLimit;
+            const isAlmostOverdue = (timeLimit === 4 && timeDifference > 3) || (timeLimit === 4 * 24 && timeDifference > 3 * 24);
+
+return(
             <div className="complaint-card" key={complaint._id}>
               <Link to={`/complaint-details/${complaint._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <h2>{complaint.complaint}</h2>
@@ -116,7 +123,8 @@ const EscalatedComplaintsScreen = () => {
                   )}
               </Link>
             </div>
-          ))}
+       );
+                })}
         </div>
       )}
     </div>
