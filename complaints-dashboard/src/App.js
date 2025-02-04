@@ -107,6 +107,18 @@ function App() {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+    const calculateEscalatedHours = (escalatedAt) => {
+    const now = new Date();
+    const escalatedDate = new Date(escalatedAt);
+    const timeDifference = (now - escalatedDate) / (1000 * 60 * 60); // Time difference in hours
+    if (timeDifference > 24) {
+      const days = Math.floor(timeDifference / 24);
+      const hours = Math.floor(timeDifference % 24);
+      return `${days} day${days > 1 ? 's' : ''}  ${hours} ${hours > 1 ? 's' : ''}`;
+    } else {
+      return `${Math.floor(timeDifference)} hour${Math.floor(timeDifference) > 1 ? 's' : ''}`;
+    }
+  };
 
   if (loading) {
     return     <Button
