@@ -106,7 +106,7 @@ const ComplaintDetailsScreen = () => {
             cursor: 'pointer',
           }}
         >
-          Complete
+          Resolve
         </button>
         
         
