@@ -42,7 +42,20 @@ const EscalatedComplaintsScreen = () => {
       setFilteredComplaints(filtered);
     }
   };
-
+  const calculateTimeDifference = (createdAt) => {
+    const now = new Date();
+    const complaintDate = new Date(createdAt);
+    const timeDifference = (now - complaintDate) / (1000 * 60 * 60); // Time difference in hours
+    return timeDifference;
+  };
+  const getTimeLimit = (assignedUnit) => {
+    if (assignedUnit.startsWith('ICTI')) {
+      return 4; // 4 hours
+    } else if (assignedUnit.startsWith('BS')) {
+      return 4 * 24; // 4 days
+    }
+    return Infinity; // No time limit
+  };
   if (loading) {
     return <div className="loading">Loading...</div>;
   }
@@ -93,6 +106,14 @@ const EscalatedComplaintsScreen = () => {
                 {complaint.status === 'redo' && (
         <p><strong>Sent back:</strong> {complaint.redoCount} time(s)</p>
       )}
+              {/* Show timer if the complaint has been there for more than 4 hours */}
+       {isOverdue && (
+                    <p className="overdue-flag">🚩 Overdue</p>
+                  )}
+                      {/* Show indication if the complaint is almost overdue */}
+                      {isAlmostOverdue && !isOverdue && (
+                    <p className="almost-overdue-flag">⚠️ Almost Overdue</p>
+                  )}
               </Link>
             </div>
           ))}
