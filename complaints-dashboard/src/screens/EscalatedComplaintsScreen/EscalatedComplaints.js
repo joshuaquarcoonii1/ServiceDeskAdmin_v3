@@ -91,7 +91,7 @@ const EscalatedComplaintsScreen = () => {
       ) : (
         <div className="complaints-cards">
           {filteredComplaints.map((complaint) => {
-             {
+             
             const timeDifference = calculateTimeDifference(complaint.createdAt);
             const timeLimit = getTimeLimit(complaint.assignedUnit);
             const isOverdue = timeDifference > timeLimit;
