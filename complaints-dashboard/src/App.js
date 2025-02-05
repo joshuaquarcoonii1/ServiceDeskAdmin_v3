@@ -4,6 +4,7 @@ import axios from 'axios';
 // import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import {Button} from "@heroui/react";
+import ComplaintDetailsScreen from './screens/ComplaintsDetailsScreen/ComplaintDetails';
 
 
 function App() {
@@ -19,6 +20,8 @@ function App() {
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState('');
   const [complaint, setComplaint] = useState('');
+    const[complaintforModal, setComplaintforModal]=useState(null);
+  const[selectedLevel, setSelectedLevel]=useState('');
   const [userDetails, setUserDetails] = useState({
     name: '',
     contact:'',
@@ -119,7 +122,18 @@ function App() {
       return `${Math.floor(timeDifference)} hour${Math.floor(timeDifference) > 1 ? 's' : ''}`;
     }
   };
+ const handleLogout = () => {
+    // Clear any authentication tokens or user data
+    // Redirect to the login page
+    navigate('/login');
+  };
+  const handleOpenModal = (complaintId) => {
+    setComplaintforModal(complaintId);
+  };
 
+  const handleCloseModal = () => {
+    setComplaintforModal(null);
+  };
   if (loading) {
     return     <Button
     isLoading
@@ -225,11 +239,14 @@ function App() {
     if (!selectedUnit) {
       alert('Please select a unit');
       return;
+    }else if(!selectedLevel){
+      alert('Please select a level');
     }
 
     try {
       await axios.post(`http://172.26.4.64:3000/api/reports/${selectedComplaint._id}/assign`, {
         assignedUnit: selectedUnit,
+        level: selectedLevel,
       });
       alert('Assigned unit updated successfully');
       setIsEscalateModalOpen(false);
@@ -254,6 +271,8 @@ function App() {
       >
         New Complaint
       </button>
+     <button onClick={handleLogout} className="logout-button">Logout</button>
+
       <hr />
       <div className="filter-buttons">
         {['New', 'All', 'Escalated','Resolved', 'Completed'].map((status) => (
@@ -380,6 +399,12 @@ function App() {
             ))}
           </tbody>
         </table>}
+            {complaintforModal && (
+        <ComplaintDetailsScreen
+          complaintId={complaintforModal}
+          onClose={handleCloseModal}
+        />
+      )}
         <div className="pagination">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
@@ -491,6 +516,16 @@ function App() {
                 <option value="BS_SDI">BS_SDI</option>
                 <option value="BS_SoftwareSupport">BS_SoftwareSupport</option>
                 <option value="CST_Hardware">CST_Hardware</option>
+              </select>
+                     <label htmlFor="level">Select Level:</label>
+              <select
+              id="level"
+              value={selectedLevel}
+              onChange={(e) => setSelectedLevel(e.target.value)}
+                required>
+                <option value="">Select a level</option>
+<option value="Level 2">Level 2</option>
+<option value="Level 3">Level 3</option>
               </select>
               <button type="button" onClick={handleEscalateAndUpdateStatus}>
                 Escalate
