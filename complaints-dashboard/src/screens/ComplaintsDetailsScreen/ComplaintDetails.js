@@ -85,7 +85,7 @@ const ComplaintDetailsScreen = ({ complaintId, onClose }) => {
         {/* <button onClick={handleNavigation} style={{ marginTop: '20px', padding: '10px 20px' }}>
           Back
         </button> */}
-        <button onClick={handleClose}>Close</button>
+        <button onClick={onClose}>Close</button>
 
         <h2>{complaint.complaint}</h2>
         <p><strong>Username:</strong> {complaint.username}</p>
