@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import {Button} from "@heroui/react";
 import ComplaintDetailsScreen from './screens/ComplaintsDetailsScreen/ComplaintDetails';
-
 
 function App() {
   const [complaints, setComplaints] = useState([]);
@@ -20,7 +19,9 @@ function App() {
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState('');
   const [complaint, setComplaint] = useState('');
-    const[complaintforModal, setComplaintforModal]=useState(null);
+  const [totalComplaints, setTotalComplaints] = useState(0);
+  const [complaintsLast24Hours, setComplaintsLast24Hours] = useState(0);
+  const[complaintforModal, setComplaintforModal]=useState(null);
   const[selectedLevel, setSelectedLevel]=useState('');
   const [userDetails, setUserDetails] = useState({
     name: '',
@@ -56,7 +57,7 @@ function App() {
   const fetchComplaints = async (page = 1, status = 'All') => {
     setLoading(true);
     try {
-      const response = await axios.get('https://servicedeskadmin-v3.onrender.com/Greports_2', {
+      const response = await axios.get('http://172.20.10.2:3000/Greports_2', {
         params: {
           page,
           limit: itemsPerPage,
@@ -65,6 +66,14 @@ function App() {
       });
       setComplaints(response.data.complaints);
       setTotalPages(response.data.totalPages);
+      setTotalComplaints(response.data.complaints.length);
+  
+      const now = new Date();
+      const complaintsInLast24Hours = response.data.complaints.filter(complaint => {
+        const complaintDate = new Date(complaint.createdAt);
+        return (now - complaintDate) / (1000 * 60 * 60) <= 8;
+      });
+      setComplaintsLast24Hours(complaintsInLast24Hours.length);
     } catch (err) {
       setError('Failed to fetch complaints.');
     } finally {
@@ -76,7 +85,7 @@ function App() {
     fetchComplaints(currentPage, filterStatus);
   }, [currentPage, filterStatus]);
 
-    useEffect(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       fetchComplaints(currentPage, filterStatus);
     }, 60000); // Refresh every 60 seconds
@@ -84,9 +93,11 @@ function App() {
     return () => clearInterval(interval); // Cleanup interval on component unmount
   }, [currentPage, filterStatus]);
 
+
+
   const updateComplaintStatus = async (id, newStatus) => {
     try {
-      await axios.put(`https://servicedeskadmin-v3.onrender.com/Greports/update-status/${id}`, {
+      await axios.put(`http://172.20.10.2:3000/Greports/update-status/${id}`, {
         status: newStatus,
       });
       alert(`Status updated to ${newStatus}`);
@@ -98,7 +109,7 @@ function App() {
 
   const verifyReport = async (id) => {
     try {
-      const response = await axios.put(`https://servicedeskadmin-v3.onrender.com/reports/verify/${id}`);
+      const response = await axios.put(`http://172.20.10.2:3000/reports/verify/${id}`);
       alert(response.data.message);
       await updateComplaintStatus(id, 'completed');
     } catch (error) {
@@ -110,7 +121,7 @@ function App() {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-    const calculateEscalatedHours = (escalatedAt) => {
+  const calculateEscalatedHours = (escalatedAt) => {
     const now = new Date();
     const escalatedDate = new Date(escalatedAt);
     const timeDifference = (now - escalatedDate) / (1000 * 60 * 60); // Time difference in hours
@@ -123,7 +134,8 @@ function App() {
     }
   };
   const navigate = useNavigate();
- const handleLogout = () => {
+
+  const handleLogout = () => {
     // Clear any authentication tokens or user data
     // Redirect to the login page
     navigate('/login');
@@ -135,6 +147,7 @@ function App() {
   const handleCloseModal = () => {
     setComplaintforModal(null);
   };
+
   if (loading) {
     return     <Button
     isLoading
@@ -190,7 +203,7 @@ function App() {
 
   // Handle complaint submission
   const handleSubmit = async () => {
-    const endpoint = 'https://servicedeskadmin-v3.onrender.com/reports'; // Replace with your backend's actual URL
+    const endpoint = 'http://172.20.10.2:3000/reports'; // Replace with your backend's actual URL
     const username = userDetails.name ;
     const contact = userDetails.contact;
     const location=userDetails.location.toUpperCase();
@@ -234,6 +247,7 @@ function App() {
   const handleEscalate = (complaint) => {
     setSelectedComplaint(complaint);
     setSelectedUnit('');
+    setSelectedLevel('');
     setIsEscalateModalOpen(true);
   };
   const handleEscalateSubmit = async () => {
@@ -245,11 +259,11 @@ function App() {
     }
 
     try {
-      await axios.post(`http:/https://servicedeskadmin-v3.onrender.com/api/reports/${selectedComplaint._id}/assign`, {
+      await axios.post(`http://172.20.10.2:3000/api/reports/${selectedComplaint._id}/assign`, {
         assignedUnit: selectedUnit,
         level: selectedLevel,
       });
-      alert('Assigned unit updated successfully');
+      alert('Assigned unit and level updated successfully');
       setIsEscalateModalOpen(false);
       fetchComplaints(currentPage, filterStatus);
     } catch (err) {
@@ -266,13 +280,17 @@ function App() {
       {/* <button onClick={handleNavigation} style={{ marginTop: '20px', padding: '10px 20px' }}>
         See Escalated Complaints
       </button> */}
+      <div className="counters">
+        <p>Total Complaints: {totalComplaints}</p>
+        <p>New Complaints in Last 8 Hours: {complaintsLast24Hours}</p>
+      </div>
       <button
         style={{ margin: '1rem 0', padding: '10px 20px' }}
         onClick={() => setIsModalOpen(true)}
       >
         New Complaint
       </button>
-     <button onClick={handleLogout} className="logout-button">Logout</button>
+      <button onClick={handleLogout} className="logout-button">Logout</button>
 
       <hr />
       <div className="filter-buttons">
@@ -300,7 +318,6 @@ function App() {
               <th>Contact</th>
               {<th>Submitted</th>}
               {filterStatus !== 'New' && filterStatus !== 'Completed'&&filterStatus !== 'Resolved'&&filterStatus !== 'All'&&<th>Escalated For</th>}
-
               {filterStatus !== 'New' &&filterStatus !== 'Escalated'&& filterStatus !== 'Completed'&&filterStatus !== 'Resolved'&& <th>Escalated</th>} 
               {filterStatus !== 'New' &&filterStatus !== 'Escalated'&&<th>Resolved At</th>}
               {filterStatus !== 'Escalated'&&filterStatus !== 'Completed'&&<th>Actions</th>}
@@ -315,7 +332,7 @@ function App() {
                 complaint.complaint
                 ) : (
                 
-                  <span style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}onClick={() => handleOpenModal(complaint._id)}>
+                  <span style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => handleOpenModal(complaint._id)}>
                   {complaint.complaint}
                   </span>
                 
@@ -326,8 +343,7 @@ function App() {
               <td>{complaint.location.toUpperCase()}</td>
               <td>{complaint.username}</td>
               <td>{complaint.contact}</td>
-              {<td>{new Date(complaint.createdAt).toLocaleString('en-US', { day: 'numeric', month: 'short', hour: 'numeric', minute: 'numeric', hour12: true })}</td>}
-             
+              <td>{new Date(complaint.createdAt).toLocaleString('en-US', { day: 'numeric', month: 'short', hour: 'numeric', minute: 'numeric', hour12: true })}</td>             
                  {filterStatus === 'Escalated' && (
                 <td>{calculateEscalatedHours(complaint.EscalatedAt)} hours</td>
               )}
@@ -400,7 +416,7 @@ function App() {
             ))}
           </tbody>
         </table>}
-            {complaintforModal && (
+        {complaintforModal && (
         <ComplaintDetailsScreen
           complaintId={complaintforModal}
           onClose={handleCloseModal}
@@ -449,13 +465,28 @@ function App() {
           required
         >
           <option value="">Select Department</option>
-          <option value="MIS">MIS</option>
-          <option value="LEGAL">LEGAL</option>
-          <option value="FINANCE">FINANCE</option>
-          <option value="PROCUREMENT">PROCUREMENT</option>
-          <option value="CORPORATE COMMS">CORPORATE COMMS</option>
-          <option value="REAL ESTATE">REAL ESTATE</option>
-          <option value="TRANSPORT">TRANSPORT</option>
+          <option value="AUD">Internal Audit (AUD)</option>
+<option value="BSEC">Board Secretariat (BSEC)</option>
+<option value="CMD">Commercial Services (CMD)</option>
+<option value="CSD">Corporate Strategy (CSD)</option>
+<option value="CA&ER">Corporate Affairs & External Relations unit (CA&ER)</option>
+<option value="ESD">Engineering Services (ESD)</option>
+<option value="FIN">Finance & Investment (FIN)</option>
+<option value="ESD">Environment & Sustainable (ESD)</option>
+<option value="HRD">Human Resources (HRD)</option>
+<option value="HGD">Hydro Generation (HGD)</option>
+<option value="LSD">Legal Services (LSD)</option>
+<option value="MIS">Management Information Systems (MIS)</option>
+<option value="PRD">Procurement (PRD)</option>
+<option value="REESD">Real Estates & Security Services (REESD)</option>
+<option value="TSD">Technical Services (TSD)</option>
+<option value="TGD">Thermal Generation (TGD)</option>
+<option value="WR&RE">Water Resources & Renewables (WR&RE)</option>
+<option value="UTIL">Utilities (UTIL)</option>
+<option value="SP&NB">Special Projects & New Business (SP&NB)</option>
+<option value="ACAD">VRA Academy (ACAD)</option>
+<option value="VHSL">VRA Health Services Ltd. (VHSL)</option>
+<option value="VISL">VRA Intl. School (VISL)</option>
         </select>
         <select
           name="location"
@@ -466,7 +497,7 @@ function App() {
           <option value="">Select Location</option>
           <option value="AKUSE">AKUSE</option>
           <option value="ACCRA">ACCRA</option>
-          <option value="AKOSSOMBO">AKOSSOMBO</option>
+          <option value="AKOSOMBO">AKOSOMBO</option>
           <option value="ABOADZE">ABOADZE</option>
           <option value="TEMA">TEMA</option>
         </select>
@@ -518,7 +549,7 @@ function App() {
                 <option value="BS_SoftwareSupport">BS_SoftwareSupport</option>
                 <option value="CST_Hardware">CST_Hardware</option>
               </select>
-                     <label htmlFor="level">Select Level:</label>
+              <label htmlFor="level">Select Level:</label>
               <select
               id="level"
               value={selectedLevel}
