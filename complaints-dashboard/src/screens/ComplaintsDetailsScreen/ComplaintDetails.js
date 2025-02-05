@@ -28,7 +28,7 @@ const ComplaintDetailsScreen = ({ complaintId, onClose }) => {
     };
 
     fetchComplaintDetails();
-  }, [id]);
+  }, [complaintId]);
   // const handleClose = () => {
   //   navigate(-1); // Navigate back to the previous page
   // };
