@@ -446,6 +446,8 @@ app.post('/AdminLogin', async (req, res) => {
 app.post('/api/reports/:id/assign', async (req, res) => {
   const { id } = req.params;
   const { assignedUnit } = req.body;
+   const {level}=req.body;
+
 
   try {
     const report = await Report.findById(id);
@@ -454,9 +456,11 @@ app.post('/api/reports/:id/assign', async (req, res) => {
     }
 
     report.assignedUnit = assignedUnit;
+     report.level=level;
+
     await report.save();
 
-    res.status(200).json({ message: 'Assigned unit updated successfully', report });
+    res.status(200).json({ message: 'Assigned unit and level updated successfully', report });
   } catch (error) {
     res.status(500).json({ error: 'Error updating assigned unit' });
   }
