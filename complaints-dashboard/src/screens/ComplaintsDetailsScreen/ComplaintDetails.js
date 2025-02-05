@@ -118,7 +118,7 @@ const ComplaintDetailsScreen = ({ complaintId, onClose }) => {
       {/* Show "Complete" button only if the complaint isn't already completed */}
       {complaint.status !== 'completed' && (
         <button
-          onClick={onClick={() => handleComplete(complaint._id, 'resolved', remarks)}
+          onClick={() => handleComplete(complaint._id, 'resolved', remarks)}
           style={{
             padding: '10px 20px',
             backgroundColor: 'green',
