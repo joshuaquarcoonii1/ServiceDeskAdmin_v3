@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import axios from 'axios';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import {Button} from "@heroui/react";
 import ComplaintDetailsScreen from './screens/ComplaintsDetailsScreen/ComplaintDetails';
@@ -122,6 +122,7 @@ function App() {
       return `${Math.floor(timeDifference)} hour${Math.floor(timeDifference) > 1 ? 's' : ''}`;
     }
   };
+  const navigate = useNavigate();
  const handleLogout = () => {
     // Clear any authentication tokens or user data
     // Redirect to the login page
