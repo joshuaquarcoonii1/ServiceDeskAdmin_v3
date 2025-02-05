@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 
-const ComplaintDetailsScreen = () => {
+const ComplaintDetailsScreen = ({ complaintId, onClose }) => {
   const { id } = useParams(); // Retrieve the complaint ID from the URL
   const navigate = useNavigate(); // For navigating back to the previous screen
   const [complaint, setComplaint] = useState(null);
@@ -17,7 +17,7 @@ const ComplaintDetailsScreen = () => {
   useEffect(() => {
     const fetchComplaintDetails = async () => {
       try {
-        const response = await axios.get(`https://servicedeskadmin-v3.onrender.com/ServiceAdminEscalate/escalated/${id}`);
+        const response = await axios.get(`https://servicedeskadmin-v3.onrender.com/ServiceAdminEscalate/escalated/${complaintId}`);
         setComplaint(response.data);
         setRemarks(response.data.remarks || ''); // Initialize remarks with existing data if available
         setLoading(false);
@@ -29,20 +29,42 @@ const ComplaintDetailsScreen = () => {
 
     fetchComplaintDetails();
   }, [id]);
-  const handleClose = () => {
-    navigate(-1); // Navigate back to the previous page
-  };
-
-  const handleComplete = async (id, newStatus) => {
+  // const handleClose = () => {
+  //   navigate(-1); // Navigate back to the previous page
+  // };
+ const updateComplaintStatus = async (complaintId, status, remarks) => {
     try {
-      await axios.put(`https://servicedeskadmin-v3.onrender.com/Greports/update-status/${id}`, {
-        status: newStatus,
+      const response = await fetch(`https://servicedeskadmin-v3.onrender.com/ServiceAdminEscalate/escalated/update/${complaintId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status, remarks }),
       });
-      alert(`Status updated to ${newStatus}`);
-      navigate(-1);
-    } catch (err) {
-      alert('Failed to update status.');
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Success: Complaint updated successfully');
+        return data.complaint;
+      } else {
+        alert('Error: ' + (data.message || 'Failed to update complaint'));
+        return null;
+      }
+    } catch (error) {
+      console.error('Error updating complaint:', error.message);
+      alert('Error: An error occurred while updating the complaint');
+      return null;
     }
+  };
+  const handleComplete = async (complaintId,status, remarks) => {
+    
+    const updatedComplaint = await updateComplaintStatus(complaintId, status, remarks);
+    if (updatedComplaint) {
+      // Handle the updated complaint, e.g., update the UI or navigate back
+      console.log('Complaint updated:', updatedComplaint);
+    }
+    navigate(-1); // Navigate back to the previous page
   };
 
 
@@ -96,7 +118,7 @@ const ComplaintDetailsScreen = () => {
       {/* Show "Complete" button only if the complaint isn't already completed */}
       {complaint.status !== 'completed' && (
         <button
-          onClick={() => handleComplete(complaint._id, 'resolved')}
+          onClick={onClick={() => handleComplete(complaint._id, 'resolved', remarks)}
           style={{
             padding: '10px 20px',
             backgroundColor: 'green',
