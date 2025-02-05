@@ -190,7 +190,7 @@ function App() {
 
   // Handle complaint submission
   const handleSubmit = async () => {
-    const endpoint = 'http://172.26.4.64:3000/reports'; // Replace with your backend's actual URL
+    const endpoint = 'https://servicedeskadmin-v3.onrender.com/reports'; // Replace with your backend's actual URL
     const username = userDetails.name ;
     const contact = userDetails.contact;
     const location=userDetails.location.toUpperCase();
@@ -245,7 +245,7 @@ function App() {
     }
 
     try {
-      await axios.post(`http://172.26.4.64:3000/api/reports/${selectedComplaint._id}/assign`, {
+      await axios.post(`http:/https://servicedeskadmin-v3.onrender.com/api/reports/${selectedComplaint._id}/assign`, {
         assignedUnit: selectedUnit,
         level: selectedLevel,
       });
