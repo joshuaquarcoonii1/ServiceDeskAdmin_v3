@@ -314,11 +314,11 @@ function App() {
                 {complaint.status === 'escalated' ? (
                 complaint.complaint
                 ) : (
-                <Link to={`/complaint-details/${complaint._id}`}>
-                  <span style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}>
+                
+                  <span style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}onClick={() => handleOpenModal(complaint._id)}>
                   {complaint.complaint}
                   </span>
-                </Link>
+                
                 )}
               </td>
               {filterStatus ==='All'&&<td>{complaint.status}</td>}
