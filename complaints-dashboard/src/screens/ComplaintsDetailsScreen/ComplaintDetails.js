@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 
 const ComplaintDetailsScreen = ({ complaintId, onClose }) => {
-  const { id } = useParams(); // Retrieve the complaint ID from the URL
+  // const { complaintId } = useParams(); // Retrieve the complaint ID from the URL
   const navigate = useNavigate(); // For navigating back to the previous screen
   const [complaint, setComplaint] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,7 +32,8 @@ const ComplaintDetailsScreen = ({ complaintId, onClose }) => {
   // const handleClose = () => {
   //   navigate(-1); // Navigate back to the previous page
   // };
- const updateComplaintStatus = async (complaintId, status, remarks) => {
+
+  const updateComplaintStatus = async (complaintId, status, remarks) => {
     try {
       const response = await fetch(`https://servicedeskadmin-v3.onrender.com/ServiceAdminEscalate/escalated/update/${complaintId}`, {
         method: 'PUT',
@@ -64,7 +65,7 @@ const ComplaintDetailsScreen = ({ complaintId, onClose }) => {
       // Handle the updated complaint, e.g., update the UI or navigate back
       console.log('Complaint updated:', updatedComplaint);
     }
-    navigate(-1); // Navigate back to the previous page
+    navigate('/dashboard'); // Navigate back to the previous page
   };
 
 
@@ -79,9 +80,11 @@ const ComplaintDetailsScreen = ({ complaintId, onClose }) => {
 
 
   return (
+    <div className="modal">
+      <div className="modal-content">
     <div>
       <h1>Complaint Details</h1>
-      <div className="complaint-details">
+      
         {/* <button onClick={handleNavigation} style={{ marginTop: '20px', padding: '10px 20px' }}>
           Back
         </button> */}
@@ -94,9 +97,12 @@ const ComplaintDetailsScreen = ({ complaintId, onClose }) => {
         {complaint.assignedUnit ? (
           <p><strong>Assigned Unit:</strong> {complaint.assignedUnit}</p>
         ) : null}
-      </div>
+        {complaint.level ? (
+          <p><strong>Level:</strong> {complaint.level}</p>
+        ) : null}
+      
 
-      <div className="remarks-section">
+      
         
         {/* Show the remark as plain text if the complaint is resolved or has an existing remark */}
         {complaint.status === 'completed' || complaint.remarks ? (
@@ -113,7 +119,7 @@ const ComplaintDetailsScreen = ({ complaintId, onClose }) => {
             style={{ width: '100%', padding: '10px', margin: '10px 0' }}
           />
         )}
-      </div>
+      
 
       {/* Show "Complete" button only if the complaint isn't already completed */}
       {complaint.status !== 'completed' &&complaint.status !== 'resolved'&& (
@@ -133,6 +139,8 @@ const ComplaintDetailsScreen = ({ complaintId, onClose }) => {
         
         
       )}
+    </div>
+    </div>
     </div>
   );
 };
