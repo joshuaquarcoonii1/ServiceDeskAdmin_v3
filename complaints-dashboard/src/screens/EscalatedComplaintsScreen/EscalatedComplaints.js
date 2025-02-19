@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './EscalatedComplaintsScreen.css';
 import { Link } from 'react-router-dom';
+import ComplaintDetailsScreen from '../ComplaintsDetailsScreen/ComplaintDetails';
 
 const EscalatedComplaintsScreen = () => {
   const [complaints, setComplaints] = useState([]);
@@ -9,6 +10,7 @@ const EscalatedComplaintsScreen = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState('All');
+  const[complaintforModal, setComplaintforModal]=useState(null);
 
   useEffect(() => {
     const fetchEscalatedComplaints = async () => {
@@ -56,6 +58,14 @@ const EscalatedComplaintsScreen = () => {
     }
     return Infinity; // No time limit
   };
+    const handleOpenModal = (complaintId) => {
+    setComplaintforModal(complaintId);
+  };
+
+  const handleCloseModal = () => {
+    setComplaintforModal(null);
+  };
+
   if (loading) {
     return <div className="loading">Loading...</div>;
   }
@@ -99,7 +109,7 @@ const EscalatedComplaintsScreen = () => {
 
 return(
             <div className="complaint-card" key={complaint._id}>
-              <Link to={`/complaint-details/${complaint._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <Link onClick={() => handleOpenModal(complaint._id)} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <h2>{complaint.complaint}</h2>
                 <p><strong>Username:</strong> {complaint.username}</p>
                 <p><strong>Department:</strong> {complaint.department}</p>
@@ -126,6 +136,12 @@ return(
        );
                 })}
         </div>
+      )}
+         {complaintforModal && (
+        <ComplaintDetailsScreen
+          complaintId={complaintforModal}
+          onClose={handleCloseModal}
+        />
       )}
     </div>
   );
