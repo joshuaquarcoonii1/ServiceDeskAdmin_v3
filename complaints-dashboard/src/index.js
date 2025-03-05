@@ -8,6 +8,7 @@ import EscalatedComplaintsScreen from './screens/EscalatedComplaintsScreen/Escal
 import ComplaintDetailsScreen from './screens/ComplaintsDetailsScreen/ComplaintDetails';
 import Login from './screens/Login/Login';
 import ProtectedRoute from './ProtectedRoute';
+import SignInSide from './SignInSide';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -18,7 +19,7 @@ root.render(
         <Route path="/" element={<Navigate to="/login" replace />} />
 
         {/* Login screen */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<SignInSide />} />
 
         {/* Protected routes */}
         <Route
