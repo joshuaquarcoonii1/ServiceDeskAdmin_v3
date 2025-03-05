@@ -14,7 +14,7 @@ const EscalatedComplaintsScreen = () => {
   useEffect(() => {
     const fetchEscalatedComplaints = async () => {
       try {
-        const response = await axios.get('http://172.20.10.2:5000/ServiceAdminEscalate/escalated');
+        const response = await axios.get('https://servicedeskadmin-v3.onrender.com/ServiceAdminEscalate/escalated');
         const sortedComplaints = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setComplaints(sortedComplaints);
         setFilteredComplaints(sortedComplaints); // Initialize with all complaints
