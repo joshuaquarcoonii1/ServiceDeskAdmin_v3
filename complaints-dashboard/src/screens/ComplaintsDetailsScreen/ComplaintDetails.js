@@ -22,7 +22,7 @@ const ComplaintDetailsScreen = ({ complaintId, onClose }) => {
   useEffect(() => {
     const fetchComplaintDetails = async () => {
       try {
-        const response = await axios.get(`http://172.20.10.2:5000/ServiceAdminEscalate/escalated/${complaintId}`);
+        const response = await axios.get(`https://servicedeskadmin-v3.onrender.com/ServiceAdminEscalate/escalated/${complaintId}`);
         setComplaint(response.data);
         setRemarks(response.data.remarks || ''); // Initialize remarks with existing data if available
         setLoading(false);
@@ -40,7 +40,7 @@ const ComplaintDetailsScreen = ({ complaintId, onClose }) => {
 
   const updateComplaintStatus = async (complaintId, status, remarks) => {
     try {
-      const response = await fetch(`http://172.20.10.2:5000/ServiceAdminEscalate/escalated/update/${complaintId}`, {
+      const response = await fetch(`https://servicedeskadmin-v3.onrender.com/ServiceAdminEscalate/escalated/update/${complaintId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ const ComplaintDetailsScreen = ({ complaintId, onClose }) => {
   const handleEditClick = async (field) => {
     if (isEditing[field] && field === 'category') {
       try {
-        const response = await fetch(`http://172.20.10.2:5000/api/reports/${complaint._id}/assign`, {
+        const response = await fetch(`https://servicedeskadmin-v3.onrender.com/api/reports/${complaint._id}/assign`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ category: selectedcategory }),
